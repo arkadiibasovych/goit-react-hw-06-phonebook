@@ -1,6 +1,8 @@
 import { createUseStyles } from 'react-jss';
-import PropTypes from 'prop-types';
+
 import ContactListItem from './ContactListItem';
+import { useSelector } from 'react-redux';
+import { getVisibleContacts } from '../../redux/contacts/contacts-selectors';
 
 const useStyles = createUseStyles({
   list: {
@@ -8,25 +10,16 @@ const useStyles = createUseStyles({
     margin: 0,
   },
 });
-const ContactList = ({ contacts, onDelete }) => {
+const ContactList = () => {
+  const contacts = useSelector(getVisibleContacts);
   const s = useStyles();
   return (
     <ul className={s.list}>
       {contacts.map(contact => (
-        <ContactListItem key={contact.id} {...contact} onDelete={onDelete} />
+        <ContactListItem key={contact.id} contact={contact} />
       ))}
     </ul>
   );
 };
 
-ContactList.propTypes = {
-  onDelete: PropTypes.func.isRequired,
-  contacts: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string,
-      name: PropTypes.string,
-      number: PropTypes.string,
-    }),
-  ).isRequired,
-};
 export default ContactList;

@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { createUseStyles } from 'react-jss';
-import PropTypes from 'prop-types';
-import shortid from 'shortid';
+
+import { useSelector, useDispatch } from 'react-redux';
+import { getContacts } from '../../redux/contacts/contacts-selectors';
+import { addContact } from '../../redux/contacts/contacts-actions';
 
 const useStyles = createUseStyles({
   form: {
@@ -39,10 +41,13 @@ const useStyles = createUseStyles({
   },
 });
 
-const PhonebookForm = ({ onSubmit, onCheckUniq }) => {
+const PhonebookForm = () => {
   const [number, setNumber] = useState('');
   const [name, setName] = useState('');
-  const id = shortid.generate();
+
+  const dispatch = useDispatch();
+  const contacts = useSelector(getContacts);
+
   const handleNameChange = e => {
     setName(e.target.value);
   };
@@ -51,20 +56,19 @@ const PhonebookForm = ({ onSubmit, onCheckUniq }) => {
   };
   const handleSubmit = e => {
     e.preventDefault();
-    const newContact = {
-      id,
-      name,
-      number,
-    };
 
     const isValidated = validateForm();
     if (!isValidated) return;
-    onSubmit(newContact);
-
+    dispatch(addContact({ name, number }));
     setName('');
     setNumber('');
   };
 
+  const handleUniq = ({ name }) => {
+    const filterContact = !!contacts.find(contact => contact.name === name);
+    filterContact && alert(`Contact is already in the Phonebook`);
+    return !filterContact;
+  };
   const validateForm = () => {
     if (!name || !number) {
       alert('Please еnter data!');
@@ -72,7 +76,8 @@ const PhonebookForm = ({ onSubmit, onCheckUniq }) => {
       setNumber('');
       return false;
     }
-    return onCheckUniq(name);
+
+    return handleUniq(name);
   };
 
   const s = useStyles();
@@ -104,8 +109,4 @@ const PhonebookForm = ({ onSubmit, onCheckUniq }) => {
   );
 };
 
-PhonebookForm.propTypes = {
-  onSubmit: PropTypes.func.isRequired,
-  onCheckUniq: PropTypes.func.isRequired,
-};
 export default PhonebookForm;

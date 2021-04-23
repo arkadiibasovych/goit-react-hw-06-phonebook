@@ -1,11 +1,11 @@
-import { createStore } from 'redux';
+import contactsReducer from './contacts/contact-reducer';
 
-const initialState = {};
+import { configureStore, combineReducers } from '@reduxjs/toolkit';
 
-const reducer = (state = initialState, action) => {
-  return state;
-};
+const rootReducer = combineReducers({
+  contacts: contactsReducer,
+});
 
-const store = createStore(reducer);
+const store = configureStore({ reducer: rootReducer });
 
 export default store;

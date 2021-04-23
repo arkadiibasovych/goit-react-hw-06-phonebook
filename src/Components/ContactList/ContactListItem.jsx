@@ -1,5 +1,7 @@
 import { createUseStyles } from 'react-jss';
-import PropTypes from 'prop-types';
+
+import { useDispatch } from 'react-redux';
+import { deleteContact } from '../../redux/contacts/contacts-actions';
 
 const useStyles = createUseStyles({
   listItem: {
@@ -30,23 +32,19 @@ const useStyles = createUseStyles({
     },
   },
 });
-const ContactItem = ({ name, number, id, onDelete }) => {
+const ContactItem = ({ contact }) => {
   const s = useStyles();
+  const dispatch = useDispatch();
+  const handleDelete = () => dispatch(deleteContact(contact.id));
   return (
     <li className={s.listItem}>
-      <p className={s.name}>{name}</p>
-      <p className={s.number}>{number}</p>
-      <button className={s.button} onClick={() => onDelete(id)}>
+      <p className={s.name}>{contact.name}</p>
+      <p className={s.number}>{contact.number}</p>
+      <button className={s.button} onClick={handleDelete}>
         Delete
       </button>
     </li>
   );
 };
 
-ContactItem.propTypes = {
-  name: PropTypes.string.isRequired,
-  number: PropTypes.string.isRequired,
-  id: PropTypes.string.isRequired,
-  onDelete: PropTypes.func.isRequired,
-};
 export default ContactItem;
